@@ -1,0 +1,21 @@
+| Order | Folder        | What you build there                     |
+| ----- | ------------- | ---------------------------------------- |
+| 1️⃣   | `config`      | Environment variables, app configuration |
+| 2️⃣   | `db`          | PostgreSQL connection                    |
+| 3️⃣   | `models`      | Task database model/schema               |
+| 4️⃣   | `types`       | TypeScript types/interfaces              |
+| 5️⃣   | `services`    | Database/business operations             |
+| 6️⃣   | `controllers` | Handle HTTP request/response             |
+| 7️⃣   | `middleware`  | Error handling, validation, etc.         |
+| 8️⃣   | `routes`      | Connect URLs → controllers               |
+| 9️⃣   | `utils`       | Small reusable helper functions          |
+
+
+Inventory Manager
+
+Products
+├── id
+├── name
+├── price
+├── quantity
+└── createdAt

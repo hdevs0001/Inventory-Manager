@@ -16,4 +16,12 @@ export const getAllProducts = asyncHandler(
     res.status(200).json(products);
   },
 );
-//
+// create a product
+export const createTheProduct = asyncHandler(
+  async (req: Request, res: Response) => {
+    const input = req.body as createInventoryProduct;
+    const products = await productService.createProduct(input);
+    res.status(201).json(products);
+  },
+);
+// 

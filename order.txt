@@ -11,6 +11,8 @@
 | 9️⃣   | `utils`       | Small reusable helper functions          |
 
 
+
+
 Inventory Manager
 
 Products
@@ -19,3 +21,58 @@ Products
 ├── price
 ├── quantity
 └── createdAt
+
+frontend 
+        My Tasks
+ ┌─────────────────────────────┐
+ │ Learn Docker          [Done]│
+ │ Learn Prometheus      [Done]│
+ │ Build CI/CD           [Done]│
+ │                             │
+ │ [ New task................] │
+ │              [Add Task]     │
+ └─────────────────────────────┘
+
+ backend API
+
+GET    /api/tasks
+POST   /api/tasks
+PATCH  /api/tasks/:id
+DELETE /api/tasks/:id
+
+
+PROJECT ARCHITECTURE
+                    Internet
+                       │
+                       ▼
+                  ┌─────────┐
+                  │  Nginx  │
+                  │  :80    │
+                  └────┬────┘
+                       │
+              ┌────────┴────────┐
+              │                 │
+              ▼                 ▼
+        ┌───────────┐     ┌────────────┐
+        │ Frontend  │     │  Backend   │
+        │ React     │     │ Express    │
+        │           │     │ :3000      │
+        └───────────┘     └─────┬──────┘
+                                │
+                                ▼
+                         ┌────────────┐
+                         │ PostgreSQL │
+                         └────────────┘
+
+
+                         Monitoring
+                              │
+                              ▼
+                       ┌────────────┐
+                       │ Prometheus │
+                       │   :9090    │
+                       └─────┬──────┘
+                             │
+                             ▼
+                       Backend /metrics
+

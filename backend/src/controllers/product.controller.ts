@@ -26,7 +26,7 @@ export const createTheProduct = asyncHandler(
 );
 // update the product
 export const updateTheProduct = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request<IdParam>, res: Response) => {
     const input = req.body as updateInventoryProduct;
     const products = await productService.updateProduct(input);
     res.status(200).json(products);

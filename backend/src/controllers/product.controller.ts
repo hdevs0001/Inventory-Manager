@@ -24,11 +24,18 @@ export const createTheProduct = asyncHandler(
     res.status(201).json(products);
   },
 );
-// update the product 
+// update the product
 export const updateTheProduct = asyncHandler(
   async (req: Request, res: Response) => {
     const input = req.body as updateInventoryProduct;
     const products = await productService.updateProduct(input);
     res.status(200).json(products);
+  },
+);
+//delete the product
+export const deleteTheProduct = asyncHandler(
+  async (req: Request<IdParam>, res: Response) => {
+    await productService.deleteProduct(req.params.id);
+    res.status(204).send();
   },
 );

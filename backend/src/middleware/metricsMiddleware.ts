@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { httpRequestErrors, htttpRequestDuration } from "../utils/metrics";
+import { httpRequestErrors, htttpRequestDuration } from "../utils/metrics.js";
 export function merticsMiddleware(
   req: Request,
   res: Response,

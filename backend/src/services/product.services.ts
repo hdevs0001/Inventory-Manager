@@ -1,13 +1,13 @@
 //first import the client (which is prisma)
-import { prisma } from "../db/prisma";
+import { prisma } from "../db/prisma.js";
 //importing the custom error from error.ts form utils
-import { NotFoundError, ValidationError } from "../utils/utils.error";
+import { NotFoundError, ValidationError } from "../utils/utils.error.js";
 //import the type for the services
 import type {
   product,
   createInventoryProduct,
   updateInventoryProduct,
-} from "../types/product.types";
+} from "../types/product.types.js";
 
 // get all the tasks
 export async function getProducts(): Promise<product[]> {
@@ -33,7 +33,11 @@ export async function createProduct(
 export async function updateProduct(
   input: updateInventoryProduct,
 ): Promise<product> {
-  if (!input.name && !input.price && !input.quantity) {
+  if (
+    input.name === undefined &&
+    input.price === undefined &&
+    input.quantity === undefined
+  ) {
     throw new ValidationError("One Of The Field Is Required");
   }
 

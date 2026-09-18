@@ -1,9 +1,9 @@
 import express, { Application } from "express";
-import { merticsMiddleware } from "./middleware/metricsMiddleware";
-import healthRoutes from "./routes/health.routes";
-import { register } from "./utils/metrics";
-import { errorMiddleware } from "./middleware/error.middleware";
-import productRoutes from "./routes/product.routes";
+import { merticsMiddleware } from "./middleware/metricsMiddleware.js";
+import healthRoutes from "./routes/health.routes.js";
+import { register } from "./utils/metrics.js";
+import { errorMiddleware } from "./middleware/error.middleware.js";
+import productRoutes from "./routes/product.routes.js";
 const app: Application = express();
 app.use(express.json());
 app.use(merticsMiddleware);

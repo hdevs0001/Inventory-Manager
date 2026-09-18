@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import * as productService from "../services/product.services";
+import * as productService from "../services/product.services.js";
 import type {
   product,
   createInventoryProduct,
   updateInventoryProduct,
-} from "../types/product.types";
-import { asyncHandler } from "../utils/utiles.asyncHanlder";
+} from "../types/product.types.js";
+import { asyncHandler } from "../utils/utiles.asyncHanlder.js";
 
 type IdParam = { id: string };
 
@@ -27,7 +27,7 @@ export const createTheProduct = asyncHandler(
 // update the product
 export const updateTheProduct = asyncHandler(
   async (req: Request<IdParam>, res: Response) => {
-    const input = req.body as updateInventoryProduct;
+    const input = { id: req.params.id, ...req.body };
     const products = await productService.updateProduct(input);
     res.status(200).json(products);
   },

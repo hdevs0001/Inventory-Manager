@@ -1,4 +1,5 @@
 background -> ghost Fibers
+button -> https://uiverse.io/chase2k25/cowardly-stingray-92
 button -> https://uiverse.io/marcelodolza/fat-zebra-11
 
 table -> https://ui.shadcn.com/docs/components/base/table

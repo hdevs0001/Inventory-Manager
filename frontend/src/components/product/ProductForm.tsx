@@ -1,18 +1,21 @@
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import AddButton from "@/components/ButtonComponent/AddButton";
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
 
 type ProductFormProps = {
   onProductAdded: () => void;
+  onCancel: () => void;
 };
 
-function ProductForm({ onProductAdded }: ProductFormProps) {
+function ProductForm({ onProductAdded, onCancel }: ProductFormProps) {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -37,6 +40,8 @@ function ProductForm({ onProductAdded }: ProductFormProps) {
     }
 
     try {
+      setSubmitting(true);
+
       const response = await fetch(`${API_BASE}/api/product`, {
         method: "POST",
         headers: {
@@ -44,8 +49,8 @@ function ProductForm({ onProductAdded }: ProductFormProps) {
         },
         body: JSON.stringify({
           name: trimmedName,
-          price: parsedPrice,
-          quantity: parsedQuantity,
+          price: String(parsedPrice),
+          quantity: String(parsedQuantity),
         }),
       });
 
@@ -53,14 +58,12 @@ function ProductForm({ onProductAdded }: ProductFormProps) {
       try {
         data = await response.json();
       } catch {
-        // Response had no JSON body; fall through to status-based error below.
+        // No JSON body; fall through to status-based error below.
       }
 
       if (!response.ok) {
         throw new Error(data.message || "Failed to add product");
       }
-
-      console.log("Product added:", data);
 
       setName("");
       setPrice("");
@@ -70,37 +73,62 @@ function ProductForm({ onProductAdded }: ProductFormProps) {
     } catch (error) {
       console.error("Error adding product:", error);
 
-      alert(error instanceof Error ? error.message : "Something went wrong");
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong",
+      );
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-md space-y-6 rounded-xl border bg-white p-6 shadow"
+      className="w-full max-w-md space-y-6 rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-md"
     >
-      <div>
-        <h2 className="text-2xl font-bold">Add Product</h2>
+      <div className="flex items-start justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-white">
+            Add Product
+          </h2>
 
-        <p className="mt-1 text-sm text-muted-foreground">
-          Add a new product to your inventory.
-        </p>
+          <p className="mt-1 text-sm text-white/60">
+            Add a new product to your inventory.
+          </p>
+        </div>
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={onCancel}
+          className="text-white/70 hover:bg-white/10 hover:text-white"
+        >
+          Cancel
+        </Button>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="name">Product Name</Label>
+        <Label htmlFor="name" className="text-white/80">
+          Product Name
+        </Label>
 
         <Input
           id="name"
           type="text"
           placeholder="Enter product name"
           value={name}
-          onChange={(event) => setName(event.target.value)}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => setName(event.target.value)}
+          className="border-white/20 bg-white/10 text-white placeholder:text-white/40"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="price">Price</Label>
+        <Label htmlFor="price" className="text-white/80">
+          Price
+        </Label>
 
         <Input
           id="price"
@@ -108,12 +136,15 @@ function ProductForm({ onProductAdded }: ProductFormProps) {
           min="0"
           placeholder="Enter price"
           value={price}
-          onChange={(event) => setPrice(event.target.value)}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => setPrice(event.target.value)}
+          className="border-white/20 bg-white/10 text-white placeholder:text-white/40"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="quantity">Quantity</Label>
+        <Label htmlFor="quantity" className="text-white/80">
+          Quantity
+        </Label>
 
         <Input
           id="quantity"
@@ -121,11 +152,12 @@ function ProductForm({ onProductAdded }: ProductFormProps) {
           min="0"
           placeholder="Enter quantity"
           value={quantity}
-          onChange={(event) => setQuantity(event.target.value)}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => setQuantity(event.target.value)}
+          className="border-white/20 bg-white/10 text-white placeholder:text-white/40"
         />
       </div>
 
-      <AddButton />
+      <AddButton disabled={submitting} />
     </form>
   );
 }

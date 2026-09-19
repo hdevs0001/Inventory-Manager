@@ -1,9 +1,13 @@
 import styled from "styled-components";
 
-const Button = () => {
+type ButtonProps = {
+  onClick?: () => void;
+};
+
+const Button = ({ onClick }: ButtonProps) => {
   return (
     <StyledWrapper>
-      <button className="wooden-cart-button mt-4">
+      <button className="wooden-cart-button mt-4" onClick={onClick} type="button">
         <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
           <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
         </svg>

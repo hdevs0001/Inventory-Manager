@@ -1,18 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import ProductForm from "@/components/product/ProductForm";
+import ProductTable, { type Product } from "@/components/product/ProductTable";
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
 
-type Product = {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  createdAt: string;
-  updatedAt: string;
+type ProductPageProps = {
+  isFormOpen: boolean;
+  onCloseForm: () => void;
 };
 
-function ProductPage() {
+function ProductPage({ isFormOpen, onCloseForm }: ProductPageProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,59 +40,40 @@ function ProductPage() {
     fetchProducts();
   }, [fetchProducts]);
 
+  const handleProductAdded = () => {
+    onCloseForm();
+    fetchProducts();
+  };
+
   return (
-    <main className="min-h-screen bg-gray-100 p-10">
-      <div className="mx-auto max-w-6xl">
-        <h1 className="mb-8 text-4xl font-bold">
-          Inventory Manager
-        </h1>
-
-        <div className="grid gap-10 md:grid-cols-2">
-          <ProductForm
-            onProductAdded={fetchProducts}
-          />
-
-          <div className="rounded-xl border bg-white p-6 shadow">
-            <h2 className="mb-6 text-2xl font-bold">
-              Products
-            </h2>
-
-            {loading ? (
-              <p>Loading products...</p>
-            ) : error ? (
-              <p className="text-red-600">{error}</p>
-            ) : products.length === 0 ? (
-              <p className="text-muted-foreground">
-                No products found.
-              </p>
-            ) : (
-              <div className="space-y-4">
-                {products.map((product) => (
-                  <div
-                    key={product.id}
-                    className="rounded-lg border p-4"
-                  >
-                    <h3 className="font-semibold">
-                      {product.name}
-                    </h3>
-
-                    <div className="mt-2 text-sm text-muted-foreground">
-                      <p>
-                        Price: ₹{product.price}
-                      </p>
-
-                      <p>
-                        Quantity: {product.quantity}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+    <div className="mt-8 space-y-8">
+      {isFormOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+          onClick={onCloseForm}
+        >
+          <div onClick={(event) => event.stopPropagation()}>
+            <ProductForm
+              onProductAdded={handleProductAdded}
+              onCancel={onCloseForm}
+            />
           </div>
         </div>
+      )}
+
+      <div className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+        <h2 className="mb-6 text-2xl font-bold text-white">
+          Products
+        </h2>
+
+        <ProductTable
+          products={products}
+          loading={loading}
+          error={error}
+          onProductChanged={fetchProducts}
+        />
       </div>
-    </main>
+    </div>
   );
 }
 

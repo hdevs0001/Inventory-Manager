@@ -1,9 +1,12 @@
-
 import { useState } from "react";
 import styled from "styled-components";
 import type { CSSProperties } from "react";
 
-const AddButton = () => {
+type AddButtonProps = {
+  disabled?: boolean;
+};
+
+const AddButton = ({ disabled = false }: AddButtonProps) => {
   const [sent, setSent] = useState(false);
 
   const letterStyle = (index: number) =>
@@ -12,7 +15,7 @@ const AddButton = () => {
     }) as CSSProperties;
 
   const handleClick = () => {
-    if (sent) return;
+    if (sent || disabled) return;
 
     setSent(true);
 
@@ -26,7 +29,8 @@ const AddButton = () => {
       <button
         className={`button ${sent ? "is-sent" : ""}`}
         onClick={handleClick}
-        type="button"
+        type="submit"
+        disabled={disabled}
       >
         <div className="outline" />
 
@@ -159,6 +163,11 @@ const StyledWrapper = styled.div`
     font-weight: 600;
   }
 
+  .button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
   .button:hover {
     transform: scale(1.02);
 
@@ -166,6 +175,15 @@ const StyledWrapper = styled.div`
       0 0 1px 2px rgba(255, 255, 255, 0.3),
       0 15px 30px rgba(0, 0, 0, 0.3),
       0 10px 3px -3px rgba(0, 0, 0, 0.04);
+  }
+
+  .button:disabled:hover {
+    transform: none;
+
+    box-shadow:
+      0 0.5px 0.5px 1px rgba(255, 255, 255, 0.2),
+      0 10px 20px rgba(0, 0, 0, 0.2),
+      0 4px 5px 0px rgba(0, 0, 0, 0.05);
   }
 
   .button:active {
@@ -638,4 +656,3 @@ const StyledWrapper = styled.div`
 `;
 
 export default AddButton;
-

@@ -1,10 +1,16 @@
 import express from "express";
+import cors from "cors";
 import { merticsMiddleware } from "./middleware/metricsMiddleware.js";
 import healthRoutes from "./routes/health.routes.js";
 import { register } from "./utils/metrics.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 import productRoutes from "./routes/product.routes.js";
 const app = express();
+app.use(cors({
+    origin: "http://localhost:5173", // your Vite frontend's dev URL
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    credentials: true,
+}));
 app.use(express.json());
 app.use(merticsMiddleware);
 app.use("/health", healthRoutes);

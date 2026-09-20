@@ -21,7 +21,9 @@ export async function createProduct(input) {
 }
 //update the product name , price and quantity any
 export async function updateProduct(input) {
-    if (!input.name && !input.price && !input.quantity) {
+    if (input.name === undefined &&
+        input.price === undefined &&
+        input.quantity === undefined) {
         throw new ValidationError("One Of The Field Is Required");
     }
     return await prisma.products.update({

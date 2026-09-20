@@ -13,7 +13,7 @@ export const createTheProduct = asyncHandler(async (req, res) => {
 });
 // update the product
 export const updateTheProduct = asyncHandler(async (req, res) => {
-    const input = req.body;
+    const input = { id: req.params.id, ...req.body };
     const products = await productService.updateProduct(input);
     res.status(200).json(products);
 });

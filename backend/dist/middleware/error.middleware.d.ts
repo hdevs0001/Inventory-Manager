@@ -1,3 +1,3 @@
-import type { Request, Response } from "express";
-export declare function errorMiddleware(error: Error, req: Request, res: Response): void;
+import type { Request, Response, NextFunction } from "express";
+export declare function errorMiddleware(error: Error, req: Request, res: Response, next: NextFunction): void;
 //# sourceMappingURL=error.middleware.d.ts.map

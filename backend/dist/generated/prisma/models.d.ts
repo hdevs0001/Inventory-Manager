@@ -1,3 +1,3 @@
-export type * from './models/Products';
-export type * from './commonInputTypes';
+export type * from './models/Products.js';
+export type * from './commonInputTypes.js';
 //# sourceMappingURL=models.d.ts.map

@@ -10,7 +10,7 @@ const app: Application = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // your Vite frontend's dev URL
+    origin: "http://localhost:8080", // your Vite frontend's dev URL
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     credentials: true,
   }),

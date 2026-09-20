@@ -12,6 +12,7 @@ COPY prisma ./prisma
 COPY prisma7.config.ts ./
 COPY src ./src
 ENV DATABASE_URL="postgresql://user:pass@localhost:5432/db?schema=public"
+ENV DATABASE_URL_UNPOOLED="postgresql://user:pass@localhost:5432/db?schema=public"
 RUN npx prisma generate
 RUN npm run build
 
@@ -27,7 +28,7 @@ COPY package*.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
 COPY --from=builder /app/dist ./dist 
-COPY --from=builder /app/src/generated ./dist/generated
+
 RUN mkdir -p logs && chown -R appuser:appgroup logs
 
 USER appuser

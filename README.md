@@ -23,6 +23,24 @@ This README also documents a real, non-obvious set of networking bugs hit while 
 - Neon PostgreSQL (external, serverless)
 
 ---
+## APPLICATION SCREENSHOTS
+**Inventory Dashboard**
+(./images/frontend.png)
+
+**Add Product**
+(./images/form.png)
+
+**Update after the Add Product**
+(./images/after form.png)
+
+**visual Design**
+(./images/design.png)
+(./images/table.png)
+
+**VM Ubuntu Server (docker)**
+(./images/linux vm.png)
+
+---
 
 ## Project structure
 

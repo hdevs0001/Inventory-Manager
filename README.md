@@ -25,21 +25,21 @@ This README also documents a real, non-obvious set of networking bugs hit while 
 ---
 ## APPLICATION SCREENSHOTS
 **Inventory Dashboard**
-![Inventory Dashboard](.docs/images/frontend.png)
+![Inventory Dashboard](./docs/images/frontend.png)
 
 **Add Product**
-![Add Product](.docs/images/form.png)
+![Add Product](./docs/images/form.png)
 
 
 **Update after the Add Product**
-![Update](.docs/images/afterform.png)
+![Update](./docs/images/afterform.png)
 
 **visual Design**
-![Visual Design](.docs/images/design.png)
-![Visual Design](.docs/images/table.png)
+![Visual Design](./docs/images/design.png)
+![Visual Design](./docs/images/table.png)
 
 **VM Ubuntu Server(docker)**
-![Ubuntu Server](.docs/images/linuxvm.png)
+![Ubuntu Server](./docs/images/linuxvm.png)
 
 ---
 

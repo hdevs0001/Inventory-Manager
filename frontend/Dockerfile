@@ -7,11 +7,11 @@ COPY postcss.config.cjs ./
 COPY tailwind.config.js ./
 COPY components.json ./
 COPY eslint.config.js ./
-
 COPY index.html ./
 COPY src ./src
 COPY tsconfig*.json ./
 COPY public ./public
+COPY .env ./
 RUN npm run build
 #=======================
 # STAGE 2:PRODUCTION 

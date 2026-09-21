@@ -8,9 +8,11 @@ import productRoutes from "./routes/product.routes.js";
 
 const app: Application = express();
 
+const allowedOrigins = (process.env.CORS_ORIGINS ?? "http://localhost:8080").split(",");
+
 app.use(
   cors({
-    origin: "http://localhost:8080", // your Vite frontend's dev URL
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     credentials: true,
   }),

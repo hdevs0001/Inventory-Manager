@@ -25,7 +25,7 @@ This README also documents a real, non-obvious set of networking bugs hit while 
 ---
 ## 🎥 Demo
 
-[▶️ Watch the Inventory Manager Demo](./docs/images/demo.mp4)
+[▶️ Watch the Inventory Manager Demo](https://youtu.be/vnqI2wGzbnY?si=apWohd8vNBFwRISE)
 
 ---
 ## APPLICATION SCREENSHOTS

@@ -1,0 +1,139 @@
+
+name: Inventory Manager CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: inventory-manager-production
+  cancel-in-progress: false
+
+env:
+  APP_DIR: ~/inventory-manager
+
+jobs:
+  # ========================================
+  # CI - Build Docker images
+  # ========================================
+  ci:
+    name: CI - Docker Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build backend Docker image
+        run: |
+          docker build \
+            -t inventory-manager-backend:ci \
+            ./backend
+
+      - name: Build frontend Docker image
+        run: |
+          docker build \
+            -t inventory-manager-frontend:ci \
+            ./frontend
+
+  # ========================================
+  # CD - Deploy to Ubuntu VM
+  # ========================================
+  deploy:
+    name: CD - Deploy to Ubuntu
+    runs-on: ubuntu-latest
+    needs: ci
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" \
+            > ~/.ssh/deploy_key
+
+          chmod 600 ~/.ssh/deploy_key
+
+          ssh-keyscan -H \
+            "${{ secrets.SSH_HOST }}" \
+            >> ~/.ssh/known_hosts
+
+      - name: Deploy to Ubuntu
+        shell: bash
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_KEY: ~/.ssh/deploy_key
+        run: |
+          ssh -i "$SSH_KEY" \
+            "$SSH_USER@$SSH_HOST" \
+            "bash -s" <<'REMOTE_SCRIPT'
+
+          set -Eeuo pipefail
+
+          APP_DIR="$HOME/inventory-manager"
+          cd "$APP_DIR"
+
+          # Save the currently deployed commit
+          CURRENT_COMMIT=$(git rev-parse HEAD)
+
+          echo "$CURRENT_COMMIT" > .previous_commit
+
+          # Pull latest source code
+          git fetch origin main
+
+          git reset --hard origin/main
+
+          # Validate Compose configuration
+          docker compose config -q
+
+          # Build updated Docker images
+          docker compose build
+
+          # Start/recreate services
+          docker compose up -d --remove-orphans
+
+          # Show container status
+          docker compose ps
+
+          # Backend health check
+          for i in {1..30}; do
+            if curl -fsS http://localhost:3001/health; then
+              echo "Backend is healthy"
+              break
+            fi
+
+            if [ "$i" -eq 30 ]; then
+              echo "Backend health check failed"
+              exit 1
+            fi
+
+            sleep 2
+          done
+
+          echo "Deployment completed successfully"
+
+          REMOTE_SCRIPT
+
+      - name: Cleanup SSH key
+        if: always()
+        run: |
+          rm -f ~/.ssh/deploy_key

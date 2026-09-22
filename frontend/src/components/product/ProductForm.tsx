@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import AddButton from "@/components/ButtonComponent/AddButton";
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
+const API_BASE = "/api";
 
 type ProductFormProps = {
   onProductAdded: () => void;
@@ -42,7 +42,7 @@ function ProductForm({ onProductAdded, onCancel }: ProductFormProps) {
     try {
       setSubmitting(true);
 
-      const response = await fetch(`${API_BASE}/api/product`, {
+      const response = await fetch(`${API_BASE}/product`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

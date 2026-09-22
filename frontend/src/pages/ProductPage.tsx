@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import ProductForm from "@/components/product/ProductForm";
 import ProductTable, { type Product } from "@/components/product/ProductTable";
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
+const API_BASE = "/api";
 
 type ProductPageProps = {
   isFormOpen: boolean;
@@ -19,7 +19,7 @@ function ProductPage({ isFormOpen, onCloseForm }: ProductPageProps) {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${API_BASE}/api/product`);
+      const response = await fetch(`${API_BASE}/product`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch products");

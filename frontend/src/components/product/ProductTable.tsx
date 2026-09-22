@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
+const API_BASE = "/api";
 
 export type Product = {
   id: string;
@@ -87,7 +87,7 @@ function ProductTable({
     try {
       setSavingId(id);
 
-      const response = await fetch(`${API_BASE}/api/product/${id}`, {
+      const response = await fetch(`${API_BASE}/product/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -129,7 +129,7 @@ function ProductTable({
     try {
       setDeletingId(id);
 
-      const response = await fetch(`${API_BASE}/api/product/${id}`, {
+      const response = await fetch(`${API_BASE}/product/${id}`, {
         method: "DELETE",
       });
 

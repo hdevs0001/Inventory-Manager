@@ -1,4 +1,3 @@
-
 name: Inventory Manager CI/CD
 
 on:
@@ -14,9 +13,6 @@ permissions:
 concurrency:
   group: inventory-manager-production
   cancel-in-progress: false
-
-env:
-  APP_DIR: ~/inventory-manager
 
 jobs:
   # ========================================
@@ -54,34 +50,39 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # ----------------------------------------
+      # Connect GitHub Actions to Tailscale
+      # ----------------------------------------
       - name: Connect to Tailscale
         uses: tailscale/github-action@v3
         with:
-          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
-          tags: tag:ci
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
 
+      # ----------------------------------------
+      # Configure SSH
+      # ----------------------------------------
       - name: Configure SSH
         shell: bash
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
 
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" \
-            > ~/.ssh/deploy_key
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
 
           chmod 600 ~/.ssh/deploy_key
 
-          ssh-keyscan -H \
-            "${{ secrets.SSH_HOST }}" \
-            >> ~/.ssh/known_hosts
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
+      # ----------------------------------------
+      # Deploy to Ubuntu
+      # ----------------------------------------
       - name: Deploy to Ubuntu
         shell: bash
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_KEY: ~/.ssh/deploy_key
+
         run: |
           ssh -i "$SSH_KEY" \
             "$SSH_USER@$SSH_HOST" \
@@ -90,50 +91,101 @@ jobs:
           set -Eeuo pipefail
 
           APP_DIR="$HOME/inventory-manager"
+
           cd "$APP_DIR"
 
-          # Save the currently deployed commit
+          echo "======================================"
+          echo "Starting deployment"
+          echo "======================================"
+
+          # Save currently deployed commit
           CURRENT_COMMIT=$(git rev-parse HEAD)
 
           echo "$CURRENT_COMMIT" > .previous_commit
 
-          # Pull latest source code
+          echo "Previous commit: $CURRENT_COMMIT"
+
+          # ----------------------------------------
+          # Pull latest code
+          # ----------------------------------------
+
+          echo "Pulling latest code..."
+
           git fetch origin main
 
           git reset --hard origin/main
 
-          # Validate Compose configuration
+          echo "New commit:"
+          git rev-parse HEAD
+
+          # ----------------------------------------
+          # Validate Docker Compose
+          # ----------------------------------------
+
+          echo "Validating Docker Compose configuration..."
+
           docker compose config -q
 
-          # Build updated Docker images
+          # ----------------------------------------
+          # Build Docker images
+          # ----------------------------------------
+
+          echo "Building Docker images..."
+
           docker compose build
 
-          # Start/recreate services
+          # ----------------------------------------
+          # Start containers
+          # ----------------------------------------
+
+          echo "Starting containers..."
+
           docker compose up -d --remove-orphans
 
+          # ----------------------------------------
           # Show container status
+          # ----------------------------------------
+
+          echo "Container status:"
+
           docker compose ps
 
+          # ----------------------------------------
           # Backend health check
+          # ----------------------------------------
+
+          echo "Checking backend health..."
+
           for i in {1..30}; do
             if curl -fsS http://localhost:3001/health; then
-              echo "Backend is healthy"
+              echo ""
+              echo "Backend is healthy."
               break
             fi
 
             if [ "$i" -eq 30 ]; then
-              echo "Backend health check failed"
+              echo ""
+              echo "Backend health check failed."
               exit 1
             fi
+
+            echo "Backend not ready. Attempt $i/30..."
 
             sleep 2
           done
 
+          echo ""
+          echo "======================================"
           echo "Deployment completed successfully"
+          echo "======================================"
 
           REMOTE_SCRIPT
 
+      # ----------------------------------------
+      # Cleanup SSH private key
+      # ----------------------------------------
       - name: Cleanup SSH key
         if: always()
+        shell: bash
         run: |
           rm -f ~/.ssh/deploy_key

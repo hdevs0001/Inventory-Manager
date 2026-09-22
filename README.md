@@ -23,6 +23,11 @@ This README also documents a real, non-obvious set of networking bugs hit while 
 - Neon PostgreSQL (external, serverless)
 
 ---
+## 🎥 Demo
+
+[▶️ Watch the Inventory Manager Demo](./docs/images/demo.mp4)
+
+---
 ## APPLICATION SCREENSHOTS
 **Inventory Dashboard**
 ![Inventory Dashboard](./docs/images/frontend.png)
